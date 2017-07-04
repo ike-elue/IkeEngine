@@ -1,0 +1,22 @@
+Text File Object Format:
+Name
+Components (separated by commas)
+MessageTypes of N (separated by commas)
+MethodNums of N (separated by "|" first, then commas)
+
+
+To Make Game:
+- If you have .txt files, you require
+    - .txt files
+    - componentUtil if you are using custom components
+        - this also means own components
+    - knowledge about method numbers
+- Else
+    - Willingness to program in init()
+    - make components (optional)
+
+Camera Component sends message of what the camera should be
+- if none is found the engine uses default camera and associated shader
+
+Console runs concurrently and only gathers data from bus if bus says it can then the console sets it to false
+- Gonna be honest, I don't understand it either
