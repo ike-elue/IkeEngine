@@ -32,9 +32,10 @@ public class Message {
         return message;
     }
     
-    public void setMessage(String message, Object associatedData) {
+    public Message setMessage(String message, Object associatedData) {
         this.message = message;
         this.associatedData = associatedData;
+        return this;
     }
     
     public boolean hasMessage() {

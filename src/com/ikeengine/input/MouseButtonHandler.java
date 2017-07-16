@@ -1,6 +1,10 @@
 package com.ikeengine.input;
 
 import com.ikeengine.debug.Message;
+import com.ikeengine.debug.MessageBus;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
@@ -11,42 +15,40 @@ import org.lwjgl.glfw.GLFWMouseButtonCallback;
  */
 public class MouseButtonHandler extends GLFWMouseButtonCallback {
 
-    private final boolean[] buttons = new boolean[16];
-    private boolean[] buttonsLast = new boolean[16];
-
-    private final Message inputs = new Message(-1, "Mouse Handler");
+    private final List<Integer> messages = new ArrayList<>();
+    private final HashMap<Integer, Mouse> buttons = new HashMap<>();
+    
+    public MouseButtonHandler() {
+        super();
+        for(Mouse mouse : Mouse.values())
+            buttons.put(mouse.value(), mouse);
+    }
     
     @Override
     public void invoke(long window, int button, int action, int mods) {
-        buttonsLast = buttons.clone();
-        try {
-            buttons[button] = (action != GLFW_RELEASE);
-        } catch (ArrayIndexOutOfBoundsException exc) {
-            exc.printStackTrace();
-            System.out.println("Invalid Button");
-        }
-    }
-
-    public void update() {
-        buttonsLast = buttons.clone();
-    }
-
-    public boolean isMouseButtonDown(Mouse button) {
-        return buttons[button.getButtonCode()];
-    }
-
-    public boolean isMouseButtonPressed(Mouse button) {
-        return buttons[button.getButtonCode()]
-                && !buttonsLast[button.getButtonCode()];
-    }
-
-    public boolean isMouseButtonReleased(Mouse button) {
-        return !buttons[button.getButtonCode()]
-                && buttonsLast[button.getButtonCode()];
+        if(!buttons.containsKey(button))
+            return;
+        buttons.get(button).determineValues(action == GLFW_RELEASE);
+        if(buttons.get(button).canBeSent() && !messages.contains(button))
+            messages.add(button);
+        else if(!buttons.get(button).canBeSent() && messages.contains(button))
+            messages.remove((Integer)button);
     }
     
-    public Message getHandler() {
-        inputs.setMessage("MOUSE_INPUT", this);
-        return inputs;
+    public void getMessages(MessageBus bus) {
+        messages.stream().forEach((i) -> {
+            bus.addMessage(new Message(-1, "MouseButton Handler").setMessage("MOUSE_INPUT", buttons.get(i)));
+        });
+    }
+    
+    public void update() {
+        int i = 0;
+        while(i < messages.size()) {
+            buttons.get(messages.get(i)).update();
+            if(!buttons.get(messages.get(i)).down)
+                messages.remove(messages.get(i));
+            else
+                i++;
+        }
     }
 }

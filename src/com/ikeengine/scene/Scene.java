@@ -2,10 +2,7 @@ package com.ikeengine.scene;
 
 import com.ikeengine.component.Component;
 import com.ikeengine.component.Components;
-import com.ikeengine.component.TestComponent;
-import com.ikeengine.debug.MessageActivator;
 import com.ikeengine.debug.MessageBus;
-import com.ikeengine.util.Extracter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,18 +25,10 @@ public class Scene {
         return pointer++;
     }
     
-    public void generateGameObject(Extracter e) {
-        if(e == null)
-            return;
-        int id = generateGameObject();
-        for(String component : e.getComponents())
-            addComponent(e.getComponent(id, component));
-    }
-    
     public void addComponent(Component c) {
         boolean found = false;
         for(Components comps : components) {
-            if(comps.getType().equalsIgnoreCase(c.getName())) {
+            if(comps.getType().equalsIgnoreCase(c.name)) {
                 found = true;
                 c.setMessageBus(bus);
                 comps.addComponent(c);
@@ -48,7 +37,7 @@ public class Scene {
         }
         if(found)
             return;
-        components.add(new Components(c.getName()));
+        components.add(new Components(c.name));
         addComponent(c);
     }
     

@@ -3,7 +3,6 @@ package com.ikeengine.component;
 import com.ikeengine.debug.Message;
 import com.ikeengine.debug.MessageActivator;
 import com.ikeengine.input.Key;
-import com.ikeengine.input.KeyboardHandler;
 
 /**
  *
@@ -12,6 +11,7 @@ import com.ikeengine.input.KeyboardHandler;
 public class TestComponent extends Component{
 
     public static final int ACTION = 0;
+    public static final int REPEAT = 1;
     
     public TestComponent(int id, MessageActivator activator) {
         super(id, activator, "Test");
@@ -21,19 +21,22 @@ public class TestComponent extends Component{
     public Message update(double delta, int methodNum, Object associatedData) {
         switch(methodNum) {
             case ACTION:
-                return action((KeyboardHandler) associatedData);
+                return action((Key) associatedData);
+            case REPEAT:
+                return repeat(associatedData);
             default:
                 return null;
         }
     }
     
-    public Message action(KeyboardHandler k) {
-        if(k.isKeyPressed(Key.GLFW_SPACE)) {
-            setMessage("Message Received", null);
-            System.out.println("BOOM");
-            return getMessage();
-        }
+    public Message action(Key key) {
+        if(key.down)
+            return new Message(setMessage("Message Received", null));
         return null;
+    }
+    
+    public Message repeat(Object o) {
+        return new Message(setMessage("go", o));
     }
     
 }

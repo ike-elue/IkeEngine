@@ -11,10 +11,15 @@ public class MessageBus {
     private final List<Message> messages;
     private double delta;
     private final boolean debug;
+    private final Console console;
     
-    public MessageBus(boolean debug) {
+    public MessageBus(String title, boolean debug) {
         messages = new ArrayList<>();
         this.debug = debug;
+        if(debug)
+            console = new Console(title);
+        else
+            console = null;
     }
     
     public void addMessage(Message message) {
@@ -25,10 +30,9 @@ public class MessageBus {
         this.messages.addAll(messages);
     }
     
-    public void print() {
-        messages.stream().forEach((message) -> {
-            System.out.println(message.toString());
-        });
+    public void print(String fpsString) {
+        if(console != null)
+            console.update(this, fpsString);
     }
     
     public void clean() {
@@ -59,5 +63,10 @@ public class MessageBus {
     
     public void setDelta(double delta) {
         this.delta = delta;
+    }
+    
+    public void dispose() {
+        if(console != null) 
+            console.dispose();
     }
 }

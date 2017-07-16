@@ -1,6 +1,10 @@
 package com.ikeengine.input;
 
 import com.ikeengine.debug.Message;
+import com.ikeengine.debug.MessageBus;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -11,40 +15,45 @@ import org.lwjgl.glfw.GLFWKeyCallback;
  */
 public class KeyboardHandler extends GLFWKeyCallback {
 
-    private final boolean[] keys = new boolean[15000];
-    private boolean[] keysLast = new boolean[15000];
-
-    private final Message inputs = new Message(-1, "Key Handler");
-
+    private final List<Integer> messages = new ArrayList<>();
+    private final HashMap<Integer, Key> keys = new HashMap<>();
+    
+    public KeyboardHandler() {
+        super();
+        for(Key key : Key.values())
+            keys.put(key.value(), key);
+    }
+    
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods) {
-        keysLast = keys.clone();
+        if(!keys.containsKey(key))
+            return;
         try {
-            keys[key] = (action != GLFW_RELEASE);
+            keys.get(key).determineValues(action == GLFW_RELEASE);
+            if(keys.get(key).canBeSent() && !messages.contains(key))
+                messages.add(key);
+            else if(!keys.get(key).canBeSent() && messages.contains(key))
+                messages.remove((Integer)key);
         } catch (ArrayIndexOutOfBoundsException exc) {
             exc.printStackTrace();
             System.out.println("Invalid Key");
         }
     }
 
+    public void getMessages(MessageBus bus) {
+        messages.stream().forEach((i) -> {
+            bus.addMessage(new Message(-1, "Keyboard Handler").setMessage("KEY_INPUT", keys.get(i)));
+        });
+    }
+    
     public void update() {
-        keysLast = keys.clone();
-    }
-
-    public boolean isKeyDown(Key key) {
-        return keys[key.getKeycode()];
-    }
-
-    public boolean isKeyPressed(Key key) {
-        return keys[key.getKeycode()] && !keysLast[key.getKeycode()];
-    }
-
-    public boolean isKeyReleased(Key key) {
-        return !keys[key.getKeycode()] && keysLast[key.getKeycode()];
-    }
-
-    public Message getHandler() {
-        inputs.setMessage("KEY_INPUT", this);
-        return inputs;
+        int i = 0;
+        while(i < messages.size()) {
+            keys.get(messages.get(i)).update();
+            if(!keys.get(messages.get(i)).down)
+                messages.remove(messages.get(i));
+            else
+                i++;
+        }
     }
 }

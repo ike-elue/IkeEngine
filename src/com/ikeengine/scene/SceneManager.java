@@ -11,13 +11,17 @@ public class SceneManager {
 
     private final boolean debug;
     private final HashMap<String, Scene> scenes;
+    private final HashMap<String, Scene> foreScenes;
     private Scene currentScene;
+    private Scene currentForeScene;
     private Message currentSwitchMessage;
     
     public SceneManager(boolean debug) {
         this.debug = debug;
         scenes = new HashMap<>();
         currentScene = null;
+        foreScenes = new HashMap<>();
+        currentForeScene = null;
         currentSwitchMessage = null;
     }
 
@@ -43,11 +47,32 @@ public class SceneManager {
             switchScene(tag, null);
     }
 
+    public void addForeScene(String tag, Scene scene) {
+        foreScenes.put(tag, scene);
+    }
+    
+    public void activateForeScene(String tag) {
+        if(foreScenes.containsKey(tag))
+            currentForeScene = foreScenes.get(tag);
+    }
+    
+    public void deactivateForeScene() {
+        currentForeScene = null;
+    }
+    
+    public boolean isForeSceneActive() {
+        return currentForeScene != null;
+    }
+    
     public Scene getCurrentScene() {
         return currentScene;
     }
 
-    public Scene getState(String tag) {
+    public Scene getCurrentForeScene() {
+        return currentForeScene;
+    }
+    
+    public Scene getScene(String tag) {
         return scenes.get(tag);
     }
     

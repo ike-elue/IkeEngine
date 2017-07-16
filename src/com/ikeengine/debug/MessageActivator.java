@@ -1,6 +1,7 @@
 package com.ikeengine.debug;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -8,44 +9,23 @@ import java.util.List;
  * @author Jonathan Elue
  */
 public class MessageActivator {
-    private final String[] messageTypes;
-    private final int[][] methodNums;
-    private final List<String> tempMessages;
+    public final String[] messageTypes;
+    public final Object[] comparableData;
+    public final int[][] methodNums;
+    public final int length;
     
-    public MessageActivator(String[] messageTypes, int[][] methodNums) {
-        this.messageTypes = messageTypes;
-        this.methodNums = methodNums;
-        tempMessages = new ArrayList<>();
-    }
-    
-    public String[] matchMessages(MessageBus bus) {
-        tempMessages.clear();
-        bus.getMessages().stream().forEach((message) -> {
-            for (String messageType : messageTypes) {
-                if(messageType.startsWith("-1")) {
-                    tempMessages.add(messageType);
-                    continue;
-                }
-                if (message.getMessage().equalsIgnoreCase(messageType))
-                    tempMessages.add(messageType);
-            }
-        });
-        return (String[]) tempMessages.toArray(new String[tempMessages.size()]);
-    }
-    
-    public int[] getMethodNums(String messageType) {
-        for(int i = 0; i < messageTypes.length; i++) {
-            if(messageTypes[i].equalsIgnoreCase(messageType))
-                return methodNums[i];
+    public MessageActivator(String[] messageTypes, Object[] comparableData, int[][] methodNums) {
+        if(messageTypes.length != comparableData.length || messageTypes.length != methodNums.length || comparableData.length != methodNums.length) {
+            this.messageTypes = null;
+            this.comparableData = null;
+            this.methodNums = null;
+            length = -1;
         }
-        return new int[] {-1};
+        else {
+            this.messageTypes = messageTypes;
+            this.comparableData = comparableData;
+            this.methodNums = methodNums;
+            length = messageTypes.length;
+        }
     }
-    
-    public Object getData(String messageType, MessageBus bus) {
-        for(Message m : bus.getMessages())
-            if(m.getMessage().equalsIgnoreCase(messageType))
-                return m.getData();
-        return null;
-    }
-    
 }

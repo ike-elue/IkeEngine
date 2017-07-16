@@ -5,8 +5,8 @@ import com.ikeengine.debug.MessageBus;
 import com.ikeengine.input.CursorPosHandler;
 import com.ikeengine.input.KeyboardHandler;
 import com.ikeengine.input.MouseButtonHandler;
+import com.ikeengine.render.Renderer;
 import com.ikeengine.scene.SceneManager;
-import com.ikeengine.util.ComponentUtil;
 import com.ikeengine.util.Loader;
 import static org.lwjgl.glfw.Callbacks.errorCallbackPrint;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
@@ -64,6 +64,7 @@ public class Core implements Runnable {
 
     public static boolean running;
     private Thread thread;
+    private String fpsString;
     
     private final ThreadPool pool;
     public final MessageBus bus;
@@ -81,21 +82,24 @@ public class Core implements Runnable {
     public final AbstractGame game;
     
     private final Loader loader;
-    public AudioManager audio;
+    private final Renderer renderer;
+    private AudioManager audio;
 
-    public Core(String title, int width, int height, int threadCount, ComponentUtil cu, boolean debug, AbstractGame game) {
+    public Core(String title, int width, int height, int threadCount, boolean debug, AbstractGame game) {
         this.title = title;
         this.width = width;
         this.height = height;
         this.debug = debug;
         this.game = game;
         thread = null;
+        fpsString = "";
         
-        bus = new MessageBus(debug);
+        bus = new MessageBus(title, debug);
         pool = new ThreadPool(threadCount, bus); 
-        s = new SceneManager(debug);   
+        s = new SceneManager(debug);
+        renderer = new Renderer(width, height);
         
-        loader = new Loader(cu);
+        loader = new Loader();
     }
 
     public void begin() {
@@ -228,9 +232,7 @@ public class Core implements Runnable {
             if (render) {
                 render();
                 if(debug)
-                    System.out.println("FPS: " + fps +
-                            " Delta: " + fpsRefined +
-                            "\n---------------------------------------------------------");
+                    fpsString = "FPS: " + fps + " Delta: " + fpsRefined;
                 frames++;
             } else {
                 try {
@@ -251,18 +253,19 @@ public class Core implements Runnable {
     private void input() {
         ((KeyboardHandler)keyCallback).update();
         ((MouseButtonHandler)mouseButtonCallback).update();
+        
         glfwPollEvents();
-        bus.addMessage(((KeyboardHandler)keyCallback).getHandler());
-        bus.addMessage(((MouseButtonHandler)mouseButtonCallback).getHandler());
-        bus.addMessage(((CursorPosHandler)cursorPosCallback).getCoords());
+        
+        ((KeyboardHandler)keyCallback).getMessages(bus);
+        ((MouseButtonHandler)mouseButtonCallback).getMessages(bus);
+        ((CursorPosHandler)cursorPosCallback).sendCoords(bus);
     }
 
     public void update(double delta) {
         bus.setDelta(delta);
         input();
-        //TEMP....
         if(debug)
-            bus.print();
+            bus.print(fpsString);
         updateScene();
     }
     
@@ -272,6 +275,7 @@ public class Core implements Runnable {
 
     private void render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //renderer.render(bus, loader);
 	glfwSwapBuffers(window);
     }
 
@@ -279,6 +283,8 @@ public class Core implements Runnable {
         
         if(audio != null)
             AudioManager.cleanUp();
+        
+        loader.dispose();
         
         glfwDestroyWindow(window);
         

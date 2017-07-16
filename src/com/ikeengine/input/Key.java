@@ -74,17 +74,32 @@ public enum Key {
     GLFW_BACKSPACE(GLFW.GLFW_KEY_BACKSPACE),
     GLFW_ESC(GLFW.GLFW_KEY_ESCAPE);
 
-    private int keycode;
-
+    private final Integer keycode;
+    public boolean down, pressed, released;
+    
     private Key(int keycode) {
         this.keycode = keycode;
+        down = false;
+        pressed = false;
+        released = false;
     }
 
-    public int getKeycode() {
+    public Integer value() {
         return keycode;
     }
-
-    public void setKeycode(int keycode) {
-        this.keycode = keycode;
+    
+    public void determineValues(boolean isReleased) {
+        pressed = !isReleased && !down; 
+        released =  isReleased && down; 
+        down = !isReleased;
+    }
+    
+    public boolean canBeSent() {
+        return down || pressed || released;
+    }
+    
+    public void update() {
+        pressed = false;
+        released = false;
     }
 }

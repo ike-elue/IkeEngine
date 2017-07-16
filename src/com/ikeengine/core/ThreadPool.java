@@ -69,7 +69,9 @@ public class ThreadPool {
      * @param s 
      */
     public void update(SceneManager s) {
-        if(s.getCurrentScene() != null)
+        if(s.isForeSceneActive())
+            execute(s.getCurrentForeScene());
+        else if(s.getCurrentScene() != null)
             execute(s.getCurrentScene());
     }
     

@@ -2,7 +2,6 @@ package com.ikeengine.core;
 
 import com.ikeengine.debug.MessageBus;
 import com.ikeengine.scene.SceneManager;
-import com.ikeengine.util.ComponentUtil;
 import com.ikeengine.util.Loader;
 
 /**
@@ -12,8 +11,8 @@ import com.ikeengine.util.Loader;
 public abstract class AbstractGame {
     private final Core core;
     
-    public AbstractGame(String title, int width, int height, int threadCount, ComponentUtil cu, boolean debug) {
-        core = new Core(title, width, height, threadCount, cu, debug, this);
+    public AbstractGame(String title, int width, int height, int threadCount, boolean debug) {
+        core = new Core(title, width, height, threadCount, debug, this);
     }
     
     public void start() {

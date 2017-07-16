@@ -1,0 +1,15 @@
+- Add render component 
+- Start render packet
+    - Have to add texture capabilities
+        - add textures in init
+    - Add Layering in render packet
+- Add rendering
+    - Then looks at common views (will be done later, or never, who knows :) )
+        - if they are of the same getView (it returns a string of the specific shape 
+        or texture it is so it is easier to draw mulitple)
+- Add collision detection capabilities
+- Add CollisionComponent
+    - looks for messages that have the name of the component
+- Add physics capabilities
+- Add PhysicsBasedMovementComponent
+    
