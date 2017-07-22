@@ -1,50 +1,51 @@
 package com.ikeengine.util;
 
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 /**
  *
  * @author Jonathan Elue
  */
 public class Transform {
-    protected final Vector2f translation, rotation, scale;
+    public final Vector3f translation, rotation, scale;
     public Transform() {
-        translation = new Vector2f();
-        rotation = new Vector2f();
-        scale = new Vector2f();
+        translation = new Vector3f();
+        rotation = new Vector3f();
+        scale = new Vector3f();
     }
-    public Vector2f translate(float x, float y) {
-        return translation.set(translation.x + x, translation.y + y);
+    public Vector3f translate(float x, float y, float z) {
+        return translation.set(translation.x + x, translation.y + y, translation.z + z);
     }
-    public Vector2f rotate(float x, float y) {
-        return rotation.set(rotation.x + x, rotation.y + y);
-    }
-    
-    public Vector2f scale(float x, float y) {
-        return scale.set(scale.x + x, scale.y + y);
+    public Vector3f rotate(float x, float y, float z) {
+        return rotation.set(rotation.x + x, rotation.y + y, rotation.z + z);
     }
     
-    public Vector2f translate(Vector2f v) {
-        return translation.set(translation.x + v.x, translation.y + v.y);
-    }
-    public Vector2f rotate(Vector2f v) {
-        return rotation.set(rotation.x + v.x, rotation.y + v.y);
+    public Vector3f scale(float x, float y, float z) {
+        return scale.set(scale.x + x, scale.y + y, scale.z + z);
     }
     
-    public Vector2f scale(Vector2f v) {
-        return scale.set(scale.x + v.x, scale.y + v.y);
+    public Vector3f translate(Vector2f v) {
+        return translation.set(translation.x + v.x, translation.y + v.y, translation.z);
+    }
+    public Vector3f rotate(Vector2f v) {
+        return rotation.set(rotation.x + v.x, rotation.y + v.y, rotation.z);
     }
     
-    public Vector2f setTranslation(float x, float y) {
-        return translation.set(x, y);
+    public Vector3f scale(Vector2f v) {
+        return scale.set(scale.x + v.x, scale.y + v.y, scale.z);
     }
     
-    public Vector2f setRotation(float x, float y) {
-        return rotation.set(x, y);
+    public Vector3f setTranslation(float x, float y) {
+        return translation.set(x, y, translation.z);
     }
     
-    public Vector2f setScale(float x, float y) {
-        return scale.set(x, y);
+    public Vector3f setRotation(float x, float y) {
+        return rotation.set(x, y, rotation.z);
+    }
+    
+    public Vector3f setScale(float x, float y) {
+        return scale.set(x, y, scale.z);
     }
     
     public void copy(Transform t) {

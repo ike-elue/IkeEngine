@@ -1,6 +1,8 @@
 package com.ikeengine.render;
 
 import com.ikeengine.shader.ShaderProgram;
+import com.ikeengine.util.Transform;
+import org.joml.Vector3f;
 
 /**
  *
@@ -8,13 +10,13 @@ import com.ikeengine.shader.ShaderProgram;
  */
 public abstract class View {
     protected final ShaderProgram shader;
-    private final String type;
+    protected String type;
     public View(String type, ShaderProgram shader) {
         this.type = type;
         this.shader = shader;
     }
     
-    public abstract void setShaderValues(RenderPacket packet);
+    public abstract void setShaderValues(Transform transform, Vector3f coordinates);
     
     public String getType() {
         return type;

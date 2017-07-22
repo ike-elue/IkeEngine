@@ -5,6 +5,7 @@ import com.ikeengine.debug.MessageBus;
 import com.ikeengine.input.CursorPosHandler;
 import com.ikeengine.input.KeyboardHandler;
 import com.ikeengine.input.MouseButtonHandler;
+import com.ikeengine.physics.CollisionWorld;
 import com.ikeengine.render.Renderer;
 import com.ikeengine.scene.SceneManager;
 import com.ikeengine.util.Loader;
@@ -84,7 +85,8 @@ public class Core implements Runnable {
     private final Loader loader;
     private final Renderer renderer;
     private AudioManager audio;
-
+    private final CollisionWorld cworld;
+    
     public Core(String title, int width, int height, int threadCount, boolean debug, AbstractGame game) {
         this.title = title;
         this.width = width;
@@ -98,8 +100,9 @@ public class Core implements Runnable {
         pool = new ThreadPool(threadCount, bus); 
         s = new SceneManager(debug);
         renderer = new Renderer(width, height);
+        cworld = new CollisionWorld();
         
-        loader = new Loader();
+        loader = new Loader(width, height);
     }
 
     public void begin() {
@@ -264,6 +267,7 @@ public class Core implements Runnable {
     public void update(double delta) {
         bus.setDelta(delta);
         input();
+        cworld.update(bus);
         if(debug)
             bus.print(fpsString);
         updateScene();
@@ -275,7 +279,7 @@ public class Core implements Runnable {
 
     private void render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //renderer.render(bus, loader);
+        renderer.render(bus, loader);
 	glfwSwapBuffers(window);
     }
 

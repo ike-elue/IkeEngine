@@ -77,17 +77,18 @@ public class ThreadPool {
     
     public void dispose() {
         try {
-            System.out.println("attempt to shutdown executor");
+            System.out.println("Attemptting to shutdown executor");
             executor.shutdown();
             executor.awaitTermination(5, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            System.err.println("tasks interrupted");
+            System.err.println("Tasks have been interrupted");
         } finally {
             if (!executor.isTerminated()) {
-                System.err.println("cancel non-finished tasks");
+                System.err.println("Canceling non-finished tasks");
             }
             executor.shutdownNow();
-            System.out.println("shutdown finished");
+            System.out.println("Shutdown finished");
+            System.out.println(":)");
         }
     }
 }
