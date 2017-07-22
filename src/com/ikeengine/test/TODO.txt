@@ -1,3 +1,11 @@
+- VERY IMPORTANT
+    - Write Javadocs for everything
+    - Write Important Messaging Information in Messages.txt
+        - Examples
+            - camera_coords
+            - collider
+            - etc
+---------------------------------------------------------------------------------
 - Add render component 
 - Start render packet
     - Add Layering in render packet
@@ -5,8 +13,6 @@
     - Then looks at common views (will be done later, or never, who knows :) )
         - if they are of the same getView (it returns a string of the specific shape 
         or texture it is so it is easier to draw mulitple)
-- Add CollisionComponent
-    - looks for messages that have the name of the component
 - Add physics capabilities
 - Add PhysicsBasedMovementComponent
     

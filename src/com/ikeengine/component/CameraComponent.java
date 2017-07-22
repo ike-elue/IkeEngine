@@ -33,7 +33,7 @@ public class CameraComponent extends Component{
                 scale((Vector2f) associatedData);
                 return null;
             case SEND:
-                return send();
+                return new Message(setMessage("camera_coords", transform));
             default: 
                 return null;
         } 
@@ -50,9 +50,4 @@ public class CameraComponent extends Component{
     public void scale(Vector2f v) {
         transform.scale(v);
     }
-    
-    public Message send() {
-        return setMessage("Camera_Coords", transform);
-    }
-
 }

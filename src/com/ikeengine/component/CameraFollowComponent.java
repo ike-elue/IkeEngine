@@ -8,25 +8,28 @@ import com.ikeengine.util.Transform;
  *
  * @author Jonathan Elue
  */
-public class TransformComponent extends Component{
+public class CameraFollowComponent extends Component {
 
-    public static final int SEND = 0, COPY = 1;
-    private Transform transform;
-    
-    public TransformComponent(int id, MessageActivator activator) {
-        super(id, activator, "transform");
+    public static final int COPY = 0, SEND = 1;
+
+    private final Transform transform;
+
+    public CameraFollowComponent(int id, MessageActivator activator, String name) {
+        super(id, activator, name);
+        transform = new Transform();
     }
 
     @Override
     public Message update(double delta, int methodNum, Object associatedData) {
-        switch(methodNum) {
-            case SEND: 
-                return new Message(setMessage(name + "_transformation", transform));
+        switch (methodNum) {
             case COPY:
                 transform.copy((Transform) associatedData);
                 return null;
+            case SEND:
+                return new Message(setMessage("camera_coords", transform));
             default:
                 return null;
         }
-    }    
+    }
+
 }

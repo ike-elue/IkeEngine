@@ -5,6 +5,7 @@ import com.ikeengine.debug.MessageBus;
 import com.ikeengine.input.CursorPosHandler;
 import com.ikeengine.input.KeyboardHandler;
 import com.ikeengine.input.MouseButtonHandler;
+import com.ikeengine.input.ScrollWheelHandler;
 import com.ikeengine.physics.CollisionWorld;
 import com.ikeengine.render.Renderer;
 import com.ikeengine.scene.SceneManager;
@@ -49,10 +50,12 @@ import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.nio.ByteBuffer;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.GLFWScrollCallback;
 
 import org.lwjgl.glfw.GLFWvidmode;
 import org.lwjgl.opengl.GLContext;
@@ -75,6 +78,7 @@ public class Core implements Runnable {
     private GLFWKeyCallback keyCallback;
     private GLFWCursorPosCallback cursorPosCallback;
     private GLFWMouseButtonCallback mouseButtonCallback;
+    private GLFWScrollCallback scrollCallback;
 
     private long window;
     public final String title;
@@ -150,6 +154,8 @@ public class Core implements Runnable {
                 cursorPosCallback = new CursorPosHandler());
         glfwSetMouseButtonCallback(window,
                 mouseButtonCallback = new MouseButtonHandler());
+        glfwSetScrollCallback(window,
+                        scrollCallback = new ScrollWheelHandler());
 
         // Center window
         ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -262,6 +268,7 @@ public class Core implements Runnable {
         ((KeyboardHandler)keyCallback).getMessages(bus);
         ((MouseButtonHandler)mouseButtonCallback).getMessages(bus);
         ((CursorPosHandler)cursorPosCallback).sendCoords(bus);
+        ((ScrollWheelHandler)scrollCallback).sendScroll(bus);
     }
 
     public void update(double delta) {
