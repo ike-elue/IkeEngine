@@ -40,6 +40,11 @@ public class Renderer {
         shaders = new HashSet<>();
     }
 
+    /**
+     * Renders based on messages
+     * @param bus
+     * @param loader 
+     */
     public void render(MessageBus bus, Loader loader) {
         if(!messages.isEmpty()) {
             prevMessages.clear();
@@ -52,7 +57,7 @@ public class Renderer {
             if (m.getMessage().toLowerCase().contains("render")) {
                 messages.add(m);
             }
-            if (m.getMessage().equalsIgnoreCase("Camera_Coords")) {
+            if (m.getMessage().equalsIgnoreCase("camera_coords")) {
                 camera = m;
             }
         });
@@ -63,7 +68,7 @@ public class Renderer {
             prevMessages.stream().forEach((m) -> {
                     if (((RenderPacket) m.getData()).getView().getShaderName().equalsIgnoreCase(s)) // Can add more sorting later
                     {
-                        miniRender((RenderPacket) m.getData());
+                        miniRender((RenderPacket) m.getData(), loader);
                     }
                 });
                 loader.getShaderProgram(s).unbind();
@@ -86,15 +91,20 @@ public class Renderer {
             messages.stream().forEach((m) -> {
                 if (((RenderPacket) m.getData()).getView().getShaderName().equalsIgnoreCase(s)) // Can add more sorting later
                 {
-                    miniRender((RenderPacket) m.getData());
+                    miniRender((RenderPacket) m.getData(), loader);
                 }
             });
             loader.getShaderProgram(s).unbind();
         });
     }
 
-    public void miniRender(RenderPacket packet) {
-        packet.getView().setShaderValues(packet.getTransform(), getRealCoords(packet.getTransform().translation));
+    /**
+     * Renders object
+     * @param packet
+     * @param loader 
+     */
+    public void miniRender(RenderPacket packet, Loader loader) {
+        packet.getView().setShaderValues(loader.getShaderProgram(packet.getView().getShaderName()), packet.getTransform(), getRealCoords(packet.getTransform().getTranslation()));
         switch(packet.getView().getType().toLowerCase()) {
             case "texture":
                 drawTexture((Texture) packet.getView());
@@ -115,18 +125,30 @@ public class Renderer {
         return position.div(width/2, height/2, 1);
     }
     
+    /**
+     * Draws outline of shape
+     * @param shape 
+     */
     public void drawShape(Shape shape) {
         shape.enable();	
         glDrawElements(GL_LINES, shape.vertexCount, GL_UNSIGNED_INT, 0);
         shape.disable();
     }
     
+    /**
+     * Fills in the shape of shape
+     * @param shape 
+     */
     public void fillShape(Shape shape) {
         shape.enable();
         glDrawElements(GL_TRIANGLES, shape.vertexCount, GL_UNSIGNED_INT, 0);
         shape.disable();
     }
     
+    /**
+     * Draws texture
+     * @param texture 
+     */
     public void drawTexture(Texture texture) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture.id);

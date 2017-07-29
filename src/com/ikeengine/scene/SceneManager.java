@@ -1,6 +1,7 @@
 package com.ikeengine.scene;
 
 import com.ikeengine.debug.Message;
+import com.ikeengine.debug.MessageBus;
 import java.util.HashMap;
 
 /**
@@ -11,20 +12,23 @@ public class SceneManager {
 
     private final boolean debug;
     private final HashMap<String, Scene> scenes;
-    private final HashMap<String, Scene> foreScenes;
     private Scene currentScene;
-    private Scene currentForeScene;
-    private Message currentSwitchMessage;
+    private final Message currentSwitchMessage;
+    private boolean switched;
     
     public SceneManager(boolean debug) {
         this.debug = debug;
         scenes = new HashMap<>();
         currentScene = null;
-        foreScenes = new HashMap<>();
-        currentForeScene = null;
-        currentSwitchMessage = null;
+        currentSwitchMessage = new Message(-1, "Scene Manager");
+        switched = false;
     }
 
+    /**
+     * Switches the scene to another if the tag is correct
+     * @param tag
+     * @param onEnterInfo 
+     */
     public void switchScene(String tag, Message onEnterInfo) {
         Scene tempScene = currentScene;
         
@@ -33,7 +37,8 @@ public class SceneManager {
 
         if (tempScene != currentScene) {
             currentScene = tempScene;
-            currentSwitchMessage = onEnterInfo;
+            currentSwitchMessage.setMessage("Switched Scenes", onEnterInfo);
+            switched = true;
             if(debug)
                 System.out.println("Current Scene: " + tag);
         }
@@ -41,44 +46,40 @@ public class SceneManager {
             System.out.println("Invalid Id Num...\nSame state activated...\n");
     }
 
+    /**
+     * Adds Scene to manager
+     * @param tag
+     * @param scene 
+     */
     public void addScene(String tag, Scene scene) {
         scenes.put(tag, scene);
-        if(currentScene == null)
-            switchScene(tag, null);
-    }
-
-    public void addForeScene(String tag, Scene scene) {
-        foreScenes.put(tag, scene);
-    }
-    
-    public void activateForeScene(String tag) {
-        if(foreScenes.containsKey(tag))
-            currentForeScene = foreScenes.get(tag);
+        if(currentScene == null) {
+            currentScene = scenes.get(tag);
+            if(debug)
+                System.out.println("Current Scene: " + tag);
+        }
     }
     
-    public void deactivateForeScene() {
-        currentForeScene = null;
-    }
-    
-    public boolean isForeSceneActive() {
-        return currentForeScene != null;
-    }
-    
+    /**
+     * Returns current scene of game
+     * @return 
+     */
     public Scene getCurrentScene() {
         return currentScene;
     }
 
-    public Scene getCurrentForeScene() {
-        return currentForeScene;
-    }
-    
-    public Scene getScene(String tag) {
-        return scenes.get(tag);
-    }
-    
-    public Message getCurrentSwitchMessage() {
-        Message message = new Message(currentSwitchMessage);
-        currentSwitchMessage = null;
-        return message;
+    /**
+     * Sends current switch message if the current Scene has switched.
+     * If it happens, return true
+     * @param bus 
+     * @return
+     */
+    public boolean evalutateSwitchedScene(MessageBus bus) {
+        if(switched) {
+            bus.addMessage(currentSwitchMessage);
+            switched = false;
+            return true;
+        }
+        return false;
     }
 }

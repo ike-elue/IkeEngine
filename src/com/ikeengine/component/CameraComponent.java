@@ -27,7 +27,7 @@ public class CameraComponent extends Component{
                 translate((Vector2f) associatedData);
                 return null;
             case ROTATE: 
-                rotate((Vector2f) associatedData);
+                rotate((Float) associatedData);
                 return null;
             case SCALE: 
                 scale((Vector2f) associatedData);
@@ -39,15 +39,37 @@ public class CameraComponent extends Component{
         } 
     }
     
+    /**
+     * Translates the transform by the vector
+     * @param v 
+     */
     public void translate(Vector2f v) {
         transform.translate(v);
     }
     
-    public void rotate(Vector2f v) {
-        transform.rotate(v);
+    /**
+     * Rotates the transform by the given amount
+     * @param s
+     */
+    public void rotate(float s) {
+        transform.rotate(s);
     }
     
+    /**
+     * Scales the transform by the vector
+     * @param v 
+     */
     public void scale(Vector2f v) {
         transform.scale(v);
+    }
+    
+    @Override
+    public int[] getConstantMethods() {
+        return new int[] {SEND};
+    }
+    
+    @Override
+    public int[] getInitSceneMethods() {
+        return null;
     }
 }

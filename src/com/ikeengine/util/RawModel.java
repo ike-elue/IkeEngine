@@ -13,27 +13,43 @@ public class RawModel {
 
     public final int vaoID;
     public final int vertexCount;
-    private final int[] attributes; // Will be bettered later
+    private final int[] attributes;
     
-    public RawModel(int vaoID, int vertexCount) {
+    /**
+     * Constructs a model that can be drawn to the game
+     * @param vaoID
+     * @param vertexCount 
+     * @param attributes
+     */
+    public RawModel(int vaoID, int vertexCount, int attributes) {
         this.vaoID = vaoID;
         this.vertexCount = vertexCount;
-        attributes = new int[2];
-        attributes[0] = 0;
-        attributes[1] = 1;
+        this.attributes = new int[attributes];
+        for(int i = 0; i < attributes; i++)
+            this.attributes[i] = i;
     }
 
+    /**
+     * Binds RawModel
+     */
     public void enable() {
         glBindVertexArray(vaoID);
         for(int num : attributes)
             glEnableVertexAttribArray(num);
     }
+    
+    /**
+     * Unbinds RawModel
+     */
     public void disable() {
         for(int num : attributes)
             glDisableVertexAttribArray(num);
         glBindVertexArray(0);
     }
 
+    /**
+     * Cleans used resource
+     */
     public void cleanUp() {
         glDeleteVertexArrays(vaoID);
     }

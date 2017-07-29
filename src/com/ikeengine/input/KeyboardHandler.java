@@ -40,12 +40,19 @@ public class KeyboardHandler extends GLFWKeyCallback {
         }
     }
 
+    /**
+     * Sends any necessary key info to message bus
+     * @param bus 
+     */
     public void getMessages(MessageBus bus) {
         messages.stream().forEach((i) -> {
             bus.addMessage(new Message(-1, "Keyboard Handler").setMessage("KEY_INPUT", keys.get(i)));
         });
     }
     
+    /**
+     * Updates/Removes mouse buttons in list based on their variables
+     */
     public void update() {
         int i = 0;
         while(i < messages.size()) {

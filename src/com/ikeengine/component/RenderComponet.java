@@ -18,4 +18,14 @@ public class RenderComponet extends Component {
         return null;
     }
 
+    @Override
+    public int[] getConstantMethods() {
+        return null;
+    }
+    
+    @Override
+    public int[] getInitSceneMethods() {
+        return null;
+    }
+    
 }

@@ -14,10 +14,18 @@ public class RenderPacket {
         this.view = view;
     }
     
+    /**
+     * Returns transform object
+     * @return 
+     */
     public Transform getTransform() {
         return transform;
     }
     
+    /**
+     * Returns view of render packet
+     * @return 
+     */
     public View getView() {
         return view;
     }

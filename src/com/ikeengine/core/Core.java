@@ -1,12 +1,14 @@
 package com.ikeengine.core;
 
 import com.ikeengine.audio.AudioManager;
+import com.ikeengine.debug.Message;
 import com.ikeengine.debug.MessageBus;
 import com.ikeengine.input.CursorPosHandler;
 import com.ikeengine.input.KeyboardHandler;
 import com.ikeengine.input.MouseButtonHandler;
 import com.ikeengine.input.ScrollWheelHandler;
 import com.ikeengine.physics.CollisionWorld;
+import com.ikeengine.physics.PhysicsWorld;
 import com.ikeengine.render.Renderer;
 import com.ikeengine.scene.SceneManager;
 import com.ikeengine.util.Loader;
@@ -50,6 +52,7 @@ import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.nio.ByteBuffer;
+import org.joml.Vector2f;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -69,6 +72,7 @@ public class Core implements Runnable {
     public static boolean running;
     private Thread thread;
     private String fpsString;
+    private boolean firstSceneInit;
     
     private final ThreadPool pool;
     public final MessageBus bus;
@@ -83,6 +87,7 @@ public class Core implements Runnable {
     private long window;
     public final String title;
     public final int width, height;
+    public final Message dimensions;
     public final boolean debug;
     public final AbstractGame game;
     
@@ -90,6 +95,7 @@ public class Core implements Runnable {
     private final Renderer renderer;
     private AudioManager audio;
     private final CollisionWorld cworld;
+    private final PhysicsWorld pworld;
     
     public Core(String title, int width, int height, int threadCount, boolean debug, AbstractGame game) {
         this.title = title;
@@ -97,18 +103,23 @@ public class Core implements Runnable {
         this.height = height;
         this.debug = debug;
         this.game = game;
+        dimensions = new Message(-1, "Core").setMessage("GAME_DIMENSIONS", new Vector2f(width, height));
         thread = null;
         fpsString = "";
+        firstSceneInit = false;
         
         bus = new MessageBus(title, debug);
         pool = new ThreadPool(threadCount, bus); 
         s = new SceneManager(debug);
+        loader = new Loader(width, height);
         renderer = new Renderer(width, height);
         cworld = new CollisionWorld();
-        
-        loader = new Loader(width, height);
+        pworld = new PhysicsWorld();
     }
 
+    /**
+     * Starts Game
+     */
     public void begin() {
         if (thread == null) {
             thread = new Thread(this);
@@ -271,10 +282,17 @@ public class Core implements Runnable {
         ((ScrollWheelHandler)scrollCallback).sendScroll(bus);
     }
 
-    public void update(double delta) {
+    
+    private void update(double delta) {
+        if(!firstSceneInit) {
+            bus.addMessage(new Message(-1, "Core").setMessage("init_scene", null));
+            firstSceneInit = true;
+        }
         bus.setDelta(delta);
+        bus.addMessage(dimensions);
         input();
         cworld.update(bus);
+        pworld.update(delta, bus);
         if(debug)
             bus.print(fpsString);
         updateScene();
@@ -282,6 +300,8 @@ public class Core implements Runnable {
     
     private void updateScene() {
         pool.update(s);
+        if(s.evalutateSwitchedScene(bus))
+            bus.addMessage(new Message(-1, "Core").setMessage("init_scene", null));
     }
 
     private void render() {

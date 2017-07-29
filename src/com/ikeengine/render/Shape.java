@@ -13,8 +13,8 @@ public class Shape extends View{
     public final int vertexCount;
     private final RawModel model;
     
-    public Shape(boolean isFilled, ShaderProgram shader, RawModel model) {
-        super("shape", shader);
+    public Shape(boolean isFilled, String shaderName, RawModel model) {
+        super("shape", shaderName);
         if(isFilled)
             type += "_fill";
         else
@@ -23,14 +23,20 @@ public class Shape extends View{
         this.model = model;
     }
     
+    /**
+     * Enables the model
+     */
     public void enable() {
         model.enable();
     }
     
+    /**
+     * Disables the model
+     */
     public void disable() {
         model.disable();
     }
 
     @Override
-    public void setShaderValues(Transform transform, Vector3f coordinates) {}
+    public void setShaderValues(ShaderProgram shader, Transform transform, Vector3f coordinates) {}
 }

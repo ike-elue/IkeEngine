@@ -52,7 +52,7 @@ public abstract class ShaderProgram {
     private final Map<String, Integer> uniforms;
 
     public ShaderProgram(String vertexShaderCode, String fragmentShaderCode) throws Exception {
-        name = "";
+        name = "ShaderProgram";
         programId = glCreateProgram();
         if (programId == 0) {
             throw new Exception("Could not create Shader");
@@ -61,20 +61,41 @@ public abstract class ShaderProgram {
         createVertexShader(vertexShaderCode);
         createFragmentShader(fragmentShaderCode);
         link();
+        initUniforms();
     }
     
+    /**
+     * Returns name of shader
+     * @return 
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * Sets name of shader
+     * @param name 
+     */
     public void setName(String name) {
         this.name = name;
     }
 
-    public abstract void initUniforms();
+    /**
+     * Initializes Uniforms 
+     */
+    protected abstract void initUniforms();
 
+    /**
+     * Sets the value given to the uniform of the camera if needed
+     * @param v 
+     */
     public abstract void setCamera(Vector2f v);
     
+    /**
+     * Creates uniform if possible
+     * @param uniformName
+     * @throws Exception 
+     */
     public void createUniform(String uniformName) throws Exception {
         int uniformLocation = glGetUniformLocation(programId, uniformName);
         if (uniformLocation < 0) {
@@ -83,53 +104,88 @@ public abstract class ShaderProgram {
         uniforms.put(uniformName, uniformLocation);
     }
 
+    /**
+     * Sets Matrix4f to uniform
+     * @param uniformName
+     * @param value 
+     */
     public void setUniform(String uniformName, Matrix4f value) {
-        FloatBuffer fb = BufferUtils.createFloatBuffer(16);
-        value.get(fb);
-        glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
+        if(uniforms.containsKey(uniformName)){
+            FloatBuffer fb = BufferUtils.createFloatBuffer(16);
+            value.get(fb);
+            glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
+        }
     }
-
-    public void setUniform(String uniformName, Matrix4f value, int index) {
-        setUniform(uniformName + "[" + index + "]", value);
-    }
-
+    
+    /**
+     * Sets int to uniform
+     * @param uniformName
+     * @param value 
+     */
     public void setUniform(String uniformName, int value) {
-        glUniform1i(uniforms.get(uniformName), value);
+        if(uniforms.containsKey(uniformName))
+            glUniform1i(uniforms.get(uniformName), value);
     }
 
+    /**
+     * Sets boolean to uniform
+     * @param uniformName
+     * @param value 
+     */
     public void setUniform(String uniformName, boolean value) {
-        glUniform1f(uniforms.get(uniformName), value ? 1 : 0);
+        if(uniforms.containsKey(uniformName))
+            glUniform1f(uniforms.get(uniformName), value ? 1 : 0);
     }
 
+    /**
+     * Sets float to uniform
+     * @param uniformName
+     * @param value 
+     */
     public void setUniform(String uniformName, float value) {
-        glUniform1f(uniforms.get(uniformName), value);
+        if(uniforms.containsKey(uniformName))
+            glUniform1f(uniforms.get(uniformName), value);
     }
 
-    public void setUniform(String uniformName, float value, int index) {
-        setUniform(uniformName + "[" + index + "]", value);
-    }
-
+    /**
+     * Sets Vector2f to uniform
+     * @param uniformName
+     * @param value 
+     */
     public void setUniform(String uniformName, Vector2f value) {
-        glUniform2f(uniforms.get(uniformName), value.x, value.y);
+        if(uniforms.containsKey(uniformName))
+            glUniform2f(uniforms.get(uniformName), value.x, value.y);
     }
 
+    /**
+     * Sets Vector3f to uniform
+     * @param uniformName
+     * @param value 
+     */
     public void setUniform(String uniformName, Vector3f value) {
-        glUniform3f(uniforms.get(uniformName), value.x, value.y, value.z);
+        if(uniforms.containsKey(uniformName))
+            glUniform3f(uniforms.get(uniformName), value.x, value.y, value.z);
     }
 
+    /**
+     * Sets Vector4f to uniform
+     * @param uniformName
+     * @param value 
+     */
     public void setUniform(String uniformName, Vector4f value) {
-        glUniform4f(uniforms.get(uniformName), value.x, value.y, value.z, value.w);
+        if(uniforms.containsKey(uniformName))
+            glUniform4f(uniforms.get(uniformName), value.x, value.y, value.z, value.w);
     }
 
-    public final void createVertexShader(String shaderCode) throws Exception {
+    private void createVertexShader(String shaderCode) throws Exception {
         vertexShaderId = createShader(shaderCode, GL_VERTEX_SHADER);
     }
 
-    public final void createFragmentShader(String shaderCode) throws Exception {
+    private void createFragmentShader(String shaderCode) throws Exception {
         fragmentShaderId = createShader(shaderCode, GL_FRAGMENT_SHADER);
     }
 
-    protected int createShader(String shaderCode, int shaderType) throws Exception {
+    private int createShader(String shaderCode, int shaderType) throws Exception {
         int shaderId = glCreateShader(shaderType);
         if (shaderId == 0) {
             throw new Exception("Error creating shader. Type: " + shaderType);
@@ -147,7 +203,7 @@ public abstract class ShaderProgram {
         return shaderId;
     }
 
-    public final void link() throws Exception {
+    private final void link() throws Exception {
         glLinkProgram(programId);
         if (glGetProgrami(programId, GL_LINK_STATUS) == 0) {
             throw new Exception("Error linking Shader code: " + glGetProgramInfoLog(programId, 1024));
@@ -167,14 +223,23 @@ public abstract class ShaderProgram {
         }
     }
 
+    /**
+     * Binds Shader
+     */
     public void bind() {
         glUseProgram(programId);
     }
 
+    /**
+     * Unbinds Shader
+     */
     public void unbind() {
         glUseProgram(0);
     }
 
+    /**
+     * Cleans up resources
+     */
     public void cleanup() {
         unbind();
         if (programId != 0) {

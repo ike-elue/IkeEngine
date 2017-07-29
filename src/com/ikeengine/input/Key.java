@@ -84,20 +84,36 @@ public enum Key {
         released = false;
     }
 
+    /**
+     * Returns integer value that represents key
+     * @return 
+     */
     public Integer value() {
         return keycode;
     }
     
+    /**
+     * Determines states based on key being released
+     * @param isReleased 
+     */
     public void determineValues(boolean isReleased) {
         pressed = !isReleased && !down; 
         released =  isReleased && down; 
         down = !isReleased;
     }
     
+    /**
+     * Determines if key should be posted to message bus based on its states
+     *
+     * @return
+     */
     public boolean canBeSent() {
         return down || pressed || released;
     }
     
+    /**
+     * Updates key
+     */
     public void update() {
         pressed = false;
         released = false;

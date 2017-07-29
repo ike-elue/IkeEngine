@@ -63,17 +63,43 @@ public class Loader {
         this.screenHeight = screenHeight;
     }
 
+    /**
+     * Returns model based on name
+     * @param name
+     * @return 
+     */
     public RawModel getModel(String name) {
         return models.get(name);
     }
 
-    public void loadToVAO(String name, float[] positions, float[] textureCoords, int[] indices) {
+    /**
+     * Loads and adds RawModel based on parameters
+     * @param name
+     * @param positions
+     * @param indices 
+     */
+    public void loadToVAO(String name, float[] positions, int[] indices) {
+        int vaoID = createVAO();
+        bindIndicesBuffer(indices);
+        storeDataInAttributeList(0, 3, positions);
+        unbindVAO();
+        models.put(name, new RawModel(vaoID, indices.length, 1));
+    }
+    
+    /**
+     * Loads and adds RawModel based on parameters
+     * @param name
+     * @param positions
+     * @param textureCoords
+     * @param indices 
+     */
+    public void loadToVAO(String name, float[] positions, int[] indices, float[] textureCoords) {
         int vaoID = createVAO();
         bindIndicesBuffer(indices);
         storeDataInAttributeList(0, 3, positions);
         storeDataInAttributeList(1, 2, textureCoords);
         unbindVAO();
-        models.put(name, new RawModel(vaoID, indices.length));
+        models.put(name, new RawModel(vaoID, indices.length, 2));
     }
 
     private int createVAO() {
@@ -118,6 +144,12 @@ public class Loader {
         return buffer;
     }
 
+    /**
+     * Loads String representation of shader
+     * @param fileName
+     * @return
+     * @throws Exception 
+     */
     public String loadShaderData(String fileName) throws Exception {
         String result;
         try (InputStream in = Loader.class.getClass().getResourceAsStream(fileName);
@@ -127,15 +159,28 @@ public class Loader {
         return result;
     }
 
+    /**
+     * Adds shader into internal map
+     * @param shaderName
+     * @param program 
+     */
     public void addShader(String shaderName, ShaderProgram program) {
         shaders.put(shaderName, program);
         program.setName(shaderName);
     }
 
+    /**
+     * Returns shader based on name
+     * @param name
+     * @return 
+     */
     public ShaderProgram getShaderProgram(String name) {
         return shaders.get(name);
     }
 
+    /**
+     * Cleans used resources
+     */
     public void dispose() {
         vbos.stream().forEach((vbo) -> {
             glDeleteBuffers(vbo);
@@ -154,6 +199,11 @@ public class Loader {
         });
     }
 
+    /**
+     * Gets BufferedImage's pixels
+     * @param path
+     * @return 
+     */
     public int[] getPixels(String path) {
         try {
             BufferedImage image = ImageIO.read(Loader.class.getResourceAsStream(path));
@@ -167,8 +217,14 @@ public class Loader {
         return null;
     }
     
-    
-
+    /**
+     * Loads Texture and adds it to internal map
+     * @param name
+     * @param width
+     * @param height
+     * @param pixels
+     * @param shaderName 
+     */
     public void loadTexture(String name, int width, int height, int[] pixels, String shaderName) {
         if (!shaders.containsKey(shaderName)) {
             return;
@@ -208,7 +264,7 @@ public class Loader {
                 GL_UNSIGNED_BYTE, buffer);
 
         // Add the texture ID so we can bind it later again
-        textures.put(name, new Texture(name, textureID, width, height, screenWidth, screenHeight, shaders.get(shaderName), this));
+        textures.put(name, new Texture(name, textureID, width, height, screenWidth, screenHeight, shaderName, this));
     }
 
 }

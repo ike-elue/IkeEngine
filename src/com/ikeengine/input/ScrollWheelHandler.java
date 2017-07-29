@@ -19,6 +19,10 @@ public class ScrollWheelHandler extends GLFWScrollCallback{
         scroll.set(xOffset, yOffset);
     }
     
+    /**
+     * Sends scroll wheel input to message bus
+     * @param bus 
+     */
     public void sendScroll(MessageBus bus) {
         bus.addMessage(info.setMessage("SCROLL_INPUT", scroll));
     }

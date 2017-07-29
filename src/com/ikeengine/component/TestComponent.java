@@ -29,14 +29,23 @@ public class TestComponent extends Component{
         }
     }
     
+    @Override
+    public int[] getConstantMethods() {
+        return null;
+    }
+    
+    @Override
+    public int[] getInitSceneMethods() {
+        return null;
+    }
+    
     public Message action(Key key) {
         if(key.down)
             return new Message(setMessage("Message Received", null));
         return null;
     }
-    
+ 
     public Message repeat(Object o) {
-        return new Message(setMessage("go", o));
+        return new Message(setMessage("repeat", o));
     }
-    
 }

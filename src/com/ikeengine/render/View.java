@@ -9,20 +9,34 @@ import org.joml.Vector3f;
  * @author Jonathan Elue
  */
 public abstract class View {
-    protected final ShaderProgram shader;
+    private final String shaderName;
     protected String type;
-    public View(String type, ShaderProgram shader) {
+    public View(String type, String shaderName) {
         this.type = type;
-        this.shader = shader;
+        this.shaderName = shaderName;
     }
     
-    public abstract void setShaderValues(Transform transform, Vector3f coordinates);
+    /**
+     * Sets values of uniforms needed for shader
+     * @param shader
+     * @param transform
+     * @param coordinates 
+     */
+    public abstract void setShaderValues(ShaderProgram shader, Transform transform, Vector3f coordinates);
     
+    /**
+     * Returns type of view this is
+     * @return 
+     */
     public String getType() {
         return type;
     }
     
+    /**
+     * Returns shader name
+     * @return 
+     */
     public String getShaderName() {
-        return shader.getName();
+        return shaderName;
     }
 }

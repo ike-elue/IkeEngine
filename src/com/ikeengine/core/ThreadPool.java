@@ -38,8 +38,8 @@ public class ThreadPool {
     }
 
     /**
-     * Runs the run() method in each Component of the scene
-     * @param eManager reference to EngineManager (holds the list)
+     * Runs the call() method in each Component of the scene
+     * @param scene 
      */
     private void execute(Scene scene) {
         scene.getComponents().stream().forEach((cs) -> {
@@ -64,17 +64,18 @@ public class ThreadPool {
         futures.clear();
     }
 
-    
     /**
+     * Updates Current Scene
      * @param s 
      */
     public void update(SceneManager s) {
-        if(s.isForeSceneActive())
-            execute(s.getCurrentForeScene());
-        else if(s.getCurrentScene() != null)
+        if(s.getCurrentScene() != null)
             execute(s.getCurrentScene());
     }
     
+    /**
+     * Shuts down Executor safely
+     */
     public void dispose() {
         try {
             System.out.println("Attemptting to shutdown executor");

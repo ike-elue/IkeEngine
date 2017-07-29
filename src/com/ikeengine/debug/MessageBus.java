@@ -22,19 +22,34 @@ public class MessageBus {
             console = null;
     }
     
+    /**
+     * Adds message to message bus
+     * @param message 
+     */
     public void addMessage(Message message) {
         messages.add(message);
     }
     
+    /**
+     * Adds all messages in the list to the message bus
+     * @param messages 
+     */
     public void addMessages(List<Message> messages) {
         this.messages.addAll(messages);
     }
     
+    /**
+     * Prints to console if console is active
+     * @param fpsString 
+     */
     public void print(String fpsString) {
         if(console != null)
             console.update(this, fpsString);
     }
     
+    /**
+     * Removes null messages
+     */
     public void clean() {
         int pointer = 0;
         while(pointer < messages.size()) {
@@ -45,26 +60,48 @@ public class MessageBus {
         }   
     }
     
+    /**
+     * Clears the messages in message bus
+     */
     public void clear() {
         messages.clear();
     }
     
+    /**
+     * Returns current messages in the message bus
+     * @return 
+     */
     public List<Message> getMessages() {
         return messages;
     }
     
+    /**
+     * Returns most currently set delta
+     * @return 
+     */
     public double getDelta() {
         return delta;
     }
     
+    /**
+     * Returns true if debug mode is active
+     * @return 
+     */
     public boolean isDebug() {
         return debug;
     }
     
+    /**
+     * Sets Delta
+     * @param delta 
+     */
     public void setDelta(double delta) {
         this.delta = delta;
     }
     
+    /**
+     * Closes Console
+     */
     public void dispose() {
         if(console != null) 
             console.dispose();

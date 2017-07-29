@@ -38,7 +38,7 @@ public class Game extends AbstractGame {
 
         int test = scene.generateGameObject();
         scene.addComponent(new TestComponent(test,
-                new MessageActivator(new String[]{"KEY_INPUT", "GO"}, new Object[] {Key.GLFW_SPACE, null}, new int[][]{{TestComponent.ACTION}, {TestComponent.REPEAT}})));
+                new MessageActivator(new String[]{"KEY_INPUT", "REPEAT"}, new Object[] {Key.GLFW_SPACE, null}, new int[][]{{TestComponent.ACTION}, {TestComponent.REPEAT}})));
 
         s.addScene("Test Scene", scene);
     }

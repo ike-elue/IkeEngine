@@ -13,8 +13,11 @@ public class Collider {
         this.transform = transform;
         this.name = name;
     }
-
-    public void update(Transform transform) {
-        this.transform.copy(transform);
+    
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Collider)
+            return name.equalsIgnoreCase(((Collider) o).name);
+        return false;
     }
 }

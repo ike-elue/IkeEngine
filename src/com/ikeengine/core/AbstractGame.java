@@ -15,13 +15,18 @@ public abstract class AbstractGame {
         core = new Core(title, width, height, threadCount, debug, this);
     }
     
+    /**
+     * Starts Game
+     */
     public void start() {
         core.begin();
     }
     
+    /**
+     * Function that dictates objects, scenes, and resources
+     * @param loader
+     * @param s
+     * @param bus 
+     */
     public abstract void init(Loader loader, SceneManager s, MessageBus bus);
-    
-    public Core getCore() {
-        return core;
-    }
 }

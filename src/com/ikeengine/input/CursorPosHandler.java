@@ -19,6 +19,10 @@ public class CursorPosHandler extends GLFWCursorPosCallback {
         mouse.set(xpos, ypos);
     }
 
+    /**
+     * Sends cursor coordinates to message bus
+     * @param bus 
+     */
     public void sendCoords(MessageBus bus) {
         bus.addMessage(coords.setMessage("CURSOR_INPUT", mouse));
     }

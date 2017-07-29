@@ -35,4 +35,13 @@ public class CollisionComponet extends Component {
         }
     }
 
+    @Override
+    public int[] getConstantMethods() {
+        return null;
+    }
+    
+    @Override
+    public int[] getInitSceneMethods() {
+        return new int[] {SEND};
+    }
 }

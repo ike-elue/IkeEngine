@@ -79,6 +79,11 @@ public class Console extends JFrame implements ActionListener{
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
     }
     
+    /**
+     * Updates the console on current messages in the entire message bus
+     * @param bus
+     * @param fpsString 
+     */
     public void update(MessageBus bus, String fpsString) {
         display = fpsString + "<br>";
         if(!internalMessages.isEmpty()) {

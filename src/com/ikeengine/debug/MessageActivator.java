@@ -1,9 +1,5 @@
 package com.ikeengine.debug;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  *
  * @author Jonathan Elue
@@ -13,6 +9,8 @@ public class MessageActivator {
     public final Object[] comparableData;
     public final int[][] methodNums;
     public final int length;
+    
+    private String lastKnownName;
     
     public MessageActivator(String[] messageTypes, Object[] comparableData, int[][] methodNums) {
         if(messageTypes.length != comparableData.length || messageTypes.length != methodNums.length || comparableData.length != methodNums.length) {
@@ -27,5 +25,18 @@ public class MessageActivator {
             this.methodNums = methodNums;
             length = messageTypes.length;
         }
+        lastKnownName = "";
     }
+    
+    /**
+     * Sets all messages that want to equal the name to the name given
+     * @param name 
+     */
+    public void setName(String name) {
+        for(int i = 0; i < messageTypes.length; i++)
+            if(messageTypes[i].equalsIgnoreCase("") || messageTypes[i].equalsIgnoreCase(lastKnownName))
+                messageTypes[i] = name;
+        lastKnownName = name;
+    }
+    
 }

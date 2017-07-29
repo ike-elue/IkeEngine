@@ -21,20 +21,39 @@ public enum Mouse {
         released = false;
     }
 
+    /**
+     * Returns integer value that represents mouse button
+     *
+     * @return
+     */
     public Integer value() {
         return buttonCode;
     }
 
+    /**
+     * Determines states based on mouse button being released
+     *
+     * @param isReleased
+     */
     public void determineValues(boolean isReleased) {
         pressed = !isReleased && !down;
         released = isReleased && down;
         down = !isReleased;
     }
 
+    /**
+     * Determines if mouse button should be posted to message bus based on its
+     * states
+     *
+     * @return
+     */
     public boolean canBeSent() {
         return down || pressed || released;
     }
 
+    /**
+     * Updates mouse button
+     */
     public void update() {
         pressed = false;
         released = false;

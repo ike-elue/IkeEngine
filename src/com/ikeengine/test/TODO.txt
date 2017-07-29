@@ -1,18 +1,5 @@
-- VERY IMPORTANT
-    - Write Javadocs for everything
-    - Write Important Messaging Information in Messages.txt
-        - Examples
-            - camera_coords
-            - collider
-            - etc
----------------------------------------------------------------------------------
 - Add render component 
-- Start render packet
-    - Add Layering in render packet
-- Add rendering
-    - Then looks at common views (will be done later, or never, who knows :) )
-        - if they are of the same getView (it returns a string of the specific shape 
-        or texture it is so it is easier to draw mulitple)
-- Add physics capabilities
+- Finally Test Rendering (in hindsight, should've done awhile ago)
+- Add Layering
 - Add PhysicsBasedMovementComponent
-    
+- Optimize Drawing so if the same thing with different coords, it can recognize it

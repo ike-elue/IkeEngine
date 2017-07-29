@@ -29,4 +29,14 @@ public class TransformComponent extends Component{
                 return null;
         }
     }    
+    
+    @Override
+    public int[] getConstantMethods() {
+        return new int[]{SEND};
+    }
+    
+    @Override
+    public int[] getInitSceneMethods() {
+        return null;
+    }
 }

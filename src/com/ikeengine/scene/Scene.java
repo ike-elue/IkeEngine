@@ -21,10 +21,18 @@ public class Scene {
         this.bus = bus;
     }
     
+    /**
+     * Creates id for game object
+     * @return 
+     */
     public int generateGameObject() {
         return pointer++;
     }
     
+    /**
+     * Adds Component of a specific game object to Scene 
+     * @param c 
+     */
     public void addComponent(Component c) {
         boolean found = false;
         for(Components comps : components) {
@@ -41,11 +49,19 @@ public class Scene {
         addComponent(c);
     }
     
+    /**
+     * Adds multiple Components of a specific game object to Scene
+     * @param cs 
+     */
     public void addComponents(Component[] cs) {
         for(Component c : cs)
             addComponent(c);
     }
   
+    /**
+     * Returns categories of Components that the Scene contains
+     * @return 
+     */
     public List<Components> getComponents() {
         return components;
     }

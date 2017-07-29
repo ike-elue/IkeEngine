@@ -35,12 +35,19 @@ public class MouseButtonHandler extends GLFWMouseButtonCallback {
             messages.remove((Integer)button);
     }
     
+    /**
+     * Sends any necessary mouse button info to message bus
+     * @param bus 
+     */
     public void getMessages(MessageBus bus) {
         messages.stream().forEach((i) -> {
             bus.addMessage(new Message(-1, "MouseButton Handler").setMessage("MOUSE_INPUT", buttons.get(i)));
         });
     }
     
+    /**
+     * Updates/Removes mouse buttons in list based on their variables
+     */
     public void update() {
         int i = 0;
         while(i < messages.size()) {

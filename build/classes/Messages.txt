@@ -1,1 +1,8 @@
-
+Special Messages (Off limits unless used with real purpose):
+"" = name of component
+"collider" = sends to collision_world
+"render" = sends to renderer
+"camera_coords" = sends camera coordinates to renderer
+"init_scene" = message that happens when scene starts
+"physics_world_gravity" = sets physics world's gravity to associated data in form of Vector2 (Not Vector2f)
+"physics_body" = sends physics body to physics world 
